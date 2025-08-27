@@ -8,14 +8,20 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     private String id;
@@ -41,4 +47,19 @@ public class User {
     // Soft delete support
     private boolean isDeleted = false;
     private LocalDateTime deletedAt;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new HashSet<SimpleGrantedAuthority>();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 }

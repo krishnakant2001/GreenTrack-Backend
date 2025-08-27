@@ -24,7 +24,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     List<User> findByRegion(String region);
 
     // Custom query to find users by partial name match
-    List<User> findByNameContaining(String name);
+//    List<User> findByNameContaining(String name);
 
     // Count active users
     @Query("{$or: [" +
