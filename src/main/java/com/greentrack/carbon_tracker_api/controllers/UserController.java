@@ -1,0 +1,60 @@
+package com.greentrack.carbon_tracker_api.controllers;
+
+import com.greentrack.carbon_tracker_api.advice.ApiResponse;
+import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
+import com.greentrack.carbon_tracker_api.dto.userDto.UserUpdateRequest;
+import com.greentrack.carbon_tracker_api.services.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@Slf4j
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {
+        try {
+            UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserResponse userResponse = userService.getUserProfile(user.getEmail());
+            return ResponseEntity.ok(ApiResponse.success(userResponse));
+        } catch (Exception e) {
+            log.error("Error while fetching user profile", e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Failed to fetch user profile"));
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUserProfile(@Valid @RequestBody UserUpdateRequest request) {
+        try {
+            UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserResponse userResponse = userService.updateUserProfile(user.getEmail(), request);
+            return ResponseEntity.ok(ApiResponse.success("Profile Updated Successfully", userResponse));
+        } catch (Exception e) {
+            log.error("Error while updating user profile", e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Failed to update profile"));
+        }
+    }
+
+    @DeleteMapping("/profile")
+    public ResponseEntity<ApiResponse<String>> deleteAccount() {
+        try {
+            UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            userService.deleteUser(user.getEmail());
+            return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
+        } catch (Exception e) {
+            log.error("Error while deleting account", e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Failed to delete account"));
+        }
+    }
+}

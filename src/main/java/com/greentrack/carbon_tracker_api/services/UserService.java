@@ -3,6 +3,7 @@ package com.greentrack.carbon_tracker_api.services;
 import com.greentrack.carbon_tracker_api.dto.userDto.AuthResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserRegistrationRequest;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
+import com.greentrack.carbon_tracker_api.dto.userDto.UserUpdateRequest;
 import com.greentrack.carbon_tracker_api.entities.User;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.security.JwtService;
@@ -62,8 +63,6 @@ public class UserService implements UserDetailsService {
 
     }
 
-
-
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -77,5 +76,30 @@ public class UserService implements UserDetailsService {
         return modelMapper.map(user, UserResponse.class);
     }
 
+    public UserResponse updateUserProfile(String email, UserUpdateRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        //Update fields if provided
+        if(!request.getFirstName().isEmpty()){
+            user.setFirstName(request.getFirstName());
+        }
+        if(!request.getLastName().isEmpty()){
+            user.setLastName(request.getLastName());
+        }
+        if(!request.getRegion().isEmpty()){
+            user.setRegion(request.getRegion());
+        }
+
+        user.setUpdatedAt(LocalDateTime.now());
+        User updatedUser = userRepository.save(user);
+
+        return modelMapper.map(updatedUser, UserResponse.class);
+    }
+
+    public void deleteUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
 }

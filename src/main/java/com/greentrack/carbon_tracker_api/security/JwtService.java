@@ -24,22 +24,22 @@ public class JwtService {
     //create a JWT token
     public String generateToken(User user){
         return Jwts.builder()
-                .subject(user.getId())
+                .subject(String.valueOf(user.getId()))
                 .claim("email", user.getEmail())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000*60))
+                .expiration(new Date(System.currentTimeMillis() + 1000*60*15))
                 .signWith(getSecretKey())
                 .compact();
     }
 
     //Validate a JWT token and getting data
-    public Long getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
 
-        return Long.valueOf(claims.getSubject());
+        return claims.getSubject();
     }
 }
