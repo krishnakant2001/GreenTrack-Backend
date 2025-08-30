@@ -6,10 +6,12 @@ import com.greentrack.carbon_tracker_api.entities.enums.GoalPeriod;
 import com.greentrack.carbon_tracker_api.entities.enums.GoalType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Repository
 public interface UserGoalRepository extends MongoRepository<UserGoal, String> {
 
     // Find user's goals

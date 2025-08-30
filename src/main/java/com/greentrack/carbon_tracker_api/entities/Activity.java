@@ -3,6 +3,7 @@ package com.greentrack.carbon_tracker_api.entities;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivityCategory;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivitySubType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "activities")
+@Builder
 public class Activity {
 
     @Id
