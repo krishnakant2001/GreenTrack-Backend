@@ -15,7 +15,7 @@ public class ActivityResponse {
     private ActivitySubType subType;
     private BigDecimal quantity;
     private String unit;
-    private BigDecimal co2Emissions;
+    private BigDecimal co2eEmissions;
     private String emissionFactorRef;
     private String description;
     private LocalDateTime activityDate;

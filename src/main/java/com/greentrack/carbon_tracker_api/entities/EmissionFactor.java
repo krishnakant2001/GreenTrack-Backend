@@ -3,6 +3,7 @@ package com.greentrack.carbon_tracker_api.entities;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivityCategory;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivitySubType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "emission_factors")
