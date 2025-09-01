@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class UserGoalUpdateRequest {
@@ -20,8 +20,8 @@ public class UserGoalUpdateRequest {
     private BigDecimal targetValue;
 
     private GoalPeriod goalPeriod;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;

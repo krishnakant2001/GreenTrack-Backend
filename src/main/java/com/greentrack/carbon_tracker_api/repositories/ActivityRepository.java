@@ -30,6 +30,14 @@ public interface ActivityRepository extends MongoRepository<Activity, String> {
     // Find by user and subType
     List<Activity> findByUserIdAndSubTypeOrderByActivityDateDesc(String userId, ActivitySubType subType);
 
+    // Find activities within date range
+    List<Activity> findByUserIdAndActivityDateBetweenOrderByActivityDateDesc(
+            String userId, LocalDateTime startDate, LocalDateTime endDate);
+
+    // Find by category and date range
+    List<Activity> findByUserIdAndCategoryAndActivityDateBetweenOrderByActivityDateDesc(
+            String userId, ActivityCategory category, LocalDateTime startDate, LocalDateTime endDate);
+
     // Check for duplicate by idempotence Key
     Optional<Activity> findByUserIdAndClientIdempotencyKey(String userId, String clientIdempotencyKey);
 

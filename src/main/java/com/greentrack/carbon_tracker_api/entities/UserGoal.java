@@ -4,6 +4,7 @@ import com.greentrack.carbon_tracker_api.entities.enums.ActivityCategory;
 import com.greentrack.carbon_tracker_api.entities.enums.GoalPeriod;
 import com.greentrack.carbon_tracker_api.entities.enums.GoalType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "user_goals")

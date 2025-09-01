@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class UserGoalCreateRequest {
@@ -27,10 +27,10 @@ public class UserGoalCreateRequest {
     private GoalPeriod goalPeriod;
 
     @NotNull(message = "Start date is required")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @NotNull(message = "End date is required")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @NotNull(message = "Title is required")
     @Size(max = 100, message = "Title cannot exceed 100 characters")

@@ -74,7 +74,7 @@ public class ActivityService {
                 .build();
 
         Activity savedActivity = activityRepository.save(activity);
-        return modelMapper.map(activity, ActivityResponse.class);
+        return modelMapper.map(savedActivity, ActivityResponse.class);
 
     }
 
@@ -133,15 +133,13 @@ public class ActivityService {
         boolean needsRecalculation = request.getCategory() != null || request.getSubType() != null ||
                 request.getQuantity() != null || request.getUnit() != null;
 
-        Activity updateActivity = Activity.builder()
-                .category(request.getCategory())
-                .subType(request.getSubType())
-                .quantity(request.getQuantity())
-                .unit(request.getUnit())
-                .description(request.getDescription())
-                .activityDate(request.getActivityDate())
-                .location(request.getLocation())
-                .build();
+        if(request.getCategory() != null) activity.setCategory(request.getCategory());
+        if(request.getSubType() != null) activity.setSubType(request.getSubType());
+        if(request.getQuantity() != null) activity.setQuantity(request.getQuantity());
+        if(request.getUnit() != null) activity.setUnit(request.getUnit());
+        if(request.getDescription() != null) activity.setDescription(request.getDescription());
+        if(request.getActivityDate() != null) activity.setActivityDate(request.getActivityDate());
+        if(request.getLocation() != null) activity.setLocation(request.getLocation());
 
         // Recalculate emissions if needed
         if(needsRecalculation) {
@@ -153,7 +151,7 @@ public class ActivityService {
         }
 
         activity.setUpdatedAt(LocalDateTime.now());
-        Activity updatedActivity = activityRepository.save(updateActivity);
+        Activity updatedActivity = activityRepository.save(activity);
 
         return modelMapper.map(updatedActivity, ActivityResponse.class);
     }
