@@ -88,7 +88,7 @@ public class EmissionFactorController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<ApiResponse<List<EmissionFactorResponse>>> getEmissionFactorsByRegion(@PathVariable ActivityCategory category) {
+    public ResponseEntity<ApiResponse<List<EmissionFactorResponse>>> getEmissionFactorsByCategory(@PathVariable ActivityCategory category) {
         List<EmissionFactor> factors = emissionFactorRepository.findByCategoryOrderBySubType(category);
         List<EmissionFactorResponse> responses = factors.stream()
                 .map(factor -> modelMapper.map(factor, EmissionFactorResponse.class))
