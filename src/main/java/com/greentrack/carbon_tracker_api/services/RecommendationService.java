@@ -1,5 +1,6 @@
 package com.greentrack.carbon_tracker_api.services;
 
+import com.greentrack.carbon_tracker_api.dto.recommendationDto.RecommendationResponse;
 import com.greentrack.carbon_tracker_api.entities.Activity;
 import com.greentrack.carbon_tracker_api.entities.Recommendation;
 import com.greentrack.carbon_tracker_api.entities.User;
@@ -28,17 +29,17 @@ public class RecommendationService {
     private final ActivityRepository activityRepository;
     private final ModelMapper modelMapper;
 
-    public List<RecommendationService> getUserRecommendations(String userEmail) {
+    public List<RecommendationResponse> getUserRecommendations(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Recommendation> recommendations = recommendationRepository.findByUserIdOrderByIdDesc(user.getId());
         return recommendations.stream()
-                .map(recommendation -> modelMapper.map(recommendation, RecommendationService.class))
+                .map(recommendation -> modelMapper.map(recommendation, RecommendationResponse.class))
                 .collect(Collectors.toList());
     }
 
-    public List<RecommendationService> generateRecommendations(String userEmail) {
+    public List<RecommendationResponse> generateRecommendations(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -56,7 +57,7 @@ public class RecommendationService {
         List<Recommendation> savedRecommendations = recommendationRepository.saveAll(recommendations);
 
         return savedRecommendations.stream()
-                .map(recommendation -> modelMapper.map(recommendation, RecommendationService.class))
+                .map(recommendation -> modelMapper.map(recommendation, RecommendationResponse.class))
                 .collect(Collectors.toList());
     }
 
