@@ -1,6 +1,7 @@
 package com.greentrack.carbon_tracker_api.dto.dashboardDto;
 
 import com.greentrack.carbon_tracker_api.entities.enums.ActivityCategory;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 @Data
+@Builder
 public class DashboardSummaryResponse {
 
     private String userId;
