@@ -5,7 +5,7 @@ import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.dto.userGoalDto.UserGoalCreateRequest;
 import com.greentrack.carbon_tracker_api.dto.userGoalDto.UserGoalResponse;
 import com.greentrack.carbon_tracker_api.dto.userGoalDto.UserGoalUpdateRequest;
-import com.greentrack.carbon_tracker_api.services.impl.UserGoalServiceImpl;
+import com.greentrack.carbon_tracker_api.services.UserGoalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoalController {
 
-    private final UserGoalServiceImpl userGoalService;
+    private final UserGoalService userGoalService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<UserGoalResponse>> createGoal(@Valid @RequestBody UserGoalCreateRequest request) {

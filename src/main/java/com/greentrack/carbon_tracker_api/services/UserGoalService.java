@@ -10,6 +10,8 @@ public interface UserGoalService {
 
     UserGoalResponse createGoal(String userEmail, UserGoalCreateRequest request);
 
+    List<UserGoalResponse> getUserGoals(String userEmail);
+
     List<UserGoalResponse> getActiveGoals(String userEmail);
 
     UserGoalResponse updateGoal(String userEmail, String goalId, UserGoalUpdateRequest request);

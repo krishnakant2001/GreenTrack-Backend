@@ -3,7 +3,7 @@ package com.greentrack.carbon_tracker_api.controllers;
 import com.greentrack.carbon_tracker_api.advice.ApiResponse;
 import com.greentrack.carbon_tracker_api.dto.dashboardDto.DashboardSummaryResponse;
 import com.greentrack.carbon_tracker_api.entities.User;
-import com.greentrack.carbon_tracker_api.services.impl.DashboardServiceImpl;
+import com.greentrack.carbon_tracker_api.services.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final DashboardServiceImpl dashboardService;
+    private final DashboardService dashboardService;
 
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<DashboardSummaryResponse>> getDashboardSummary(
