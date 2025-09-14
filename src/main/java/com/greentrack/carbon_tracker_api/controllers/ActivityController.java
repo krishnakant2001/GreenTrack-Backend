@@ -5,7 +5,7 @@ import com.greentrack.carbon_tracker_api.dto.activityDto.ActivityCreateRequest;
 import com.greentrack.carbon_tracker_api.dto.activityDto.ActivityResponse;
 import com.greentrack.carbon_tracker_api.dto.activityDto.ActivityUpdateRequest;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
-import com.greentrack.carbon_tracker_api.services.ActivityService;
+import com.greentrack.carbon_tracker_api.services.impl.ActivityServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/activities")
 public class ActivityController {
 
-    private final ActivityService activityService;
+    private final ActivityServiceImpl activityService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<ActivityResponse>> createActivity(@Valid @RequestBody ActivityCreateRequest request) {

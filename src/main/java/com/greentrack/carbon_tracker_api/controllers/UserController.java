@@ -3,7 +3,7 @@ package com.greentrack.carbon_tracker_api.controllers;
 import com.greentrack.carbon_tracker_api.advice.ApiResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserUpdateRequest;
-import com.greentrack.carbon_tracker_api.services.UserService;
+import com.greentrack.carbon_tracker_api.services.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {

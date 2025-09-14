@@ -2,7 +2,7 @@ package com.greentrack.carbon_tracker_api.filter;
 
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.security.JwtService;
-import com.greentrack.carbon_tracker_api.services.UserService;
+import com.greentrack.carbon_tracker_api.services.impl.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")

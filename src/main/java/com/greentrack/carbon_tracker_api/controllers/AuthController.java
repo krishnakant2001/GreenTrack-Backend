@@ -4,8 +4,8 @@ import com.greentrack.carbon_tracker_api.advice.ApiResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.AuthResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserLoginRequest;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserRegistrationRequest;
-import com.greentrack.carbon_tracker_api.services.AuthService;
-import com.greentrack.carbon_tracker_api.services.UserService;
+import com.greentrack.carbon_tracker_api.services.impl.AuthServiceImpl;
+import com.greentrack.carbon_tracker_api.services.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
-    private final AuthService authService;
+    private final UserServiceImpl userService;
+    private final AuthServiceImpl authService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody UserRegistrationRequest request) {

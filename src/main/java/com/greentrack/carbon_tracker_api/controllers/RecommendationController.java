@@ -3,7 +3,7 @@ package com.greentrack.carbon_tracker_api.controllers;
 import com.greentrack.carbon_tracker_api.advice.ApiResponse;
 import com.greentrack.carbon_tracker_api.dto.recommendationDto.RecommendationResponse;
 import com.greentrack.carbon_tracker_api.entities.User;
-import com.greentrack.carbon_tracker_api.services.RecommendationService;
+import com.greentrack.carbon_tracker_api.services.impl.RecommendationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecommendationController {
 
-    private final RecommendationService recommendationService;
+    private final RecommendationServiceImpl recommendationService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<RecommendationResponse>>> getUserRecommendations() {
