@@ -38,10 +38,14 @@ public class UserController {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserResponse userResponse = userService.updateUserProfile(user.getEmail(), request);
             return ResponseEntity.ok(ApiResponse.success("Profile Updated Successfully", userResponse));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Error while updating user profile", e);
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error while updating user profile when password not given", e);
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Failed to update profile"));
+                    .body(ApiResponse.error("Failed to update the profile"));
         }
     }
 
