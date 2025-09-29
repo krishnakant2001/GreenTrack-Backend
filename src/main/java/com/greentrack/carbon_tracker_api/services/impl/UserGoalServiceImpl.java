@@ -50,6 +50,7 @@ public class UserGoalServiceImpl implements UserGoalService {
                 .userId(user.getId())
                 .goalType(request.getGoalType())
                 .targetCategory(request.getTargetCategory())
+                .targetValue(request.getTargetValue())
                 .period(request.getGoalPeriod())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())

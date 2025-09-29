@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/profile")
+    @GetMapping("/getProfileDetails")
     public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -32,7 +32,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/profile")
+    @PutMapping("/updateProfileDetails")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserProfile(@Valid @RequestBody UserUpdateRequest request) {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -49,7 +49,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/profile")
+    @DeleteMapping("/deleteProfile")
     public ResponseEntity<ApiResponse<String>> deleteAccount() {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

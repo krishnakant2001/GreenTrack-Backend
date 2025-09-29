@@ -74,12 +74,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserResponse getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        log.info(user.getUsername());
-        log.info(user.getPassword());
-        log.info(user.getPasswordHash());
-        Boolean flag = (Boolean) passwordEncoder.matches("Test@1234", user.getPassword());
-        if(flag) log.info("Password Matched");
-        else log.info("Password does not matched");
         return modelMapper.map(user, UserResponse.class);
     }
 
@@ -103,15 +97,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 100) {
                 throw new RuntimeException("New password must be between 6 and 100 characters");
             }
-
             if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
                 throw new RuntimeException("Your current password is incorrect");
             }
-
             if (request.getCurrentPassword().equals(request.getNewPassword())) {
                 throw new RuntimeException("New password cannot be the same as current password");
             }
-
             user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         }
 

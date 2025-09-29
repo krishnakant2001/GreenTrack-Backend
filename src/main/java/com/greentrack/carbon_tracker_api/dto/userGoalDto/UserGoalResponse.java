@@ -6,6 +6,7 @@ import com.greentrack.carbon_tracker_api.entities.enums.GoalType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,8 +19,8 @@ public class UserGoalResponse {
     private BigDecimal currentValue;
     private BigDecimal targetValue;
     private GoalPeriod period;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String title;
     private String description;
     private LocalDateTime createdAt;
