@@ -34,6 +34,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/otp/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/otp/**").permitAll()
                         .requestMatchers("/api/admin/emission-factor/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)

@@ -39,7 +39,7 @@ public class ActivityController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/getUserActivities")
     public ResponseEntity<ApiResponse<List<ActivityResponse>>> getUserActivities() {
         UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
