@@ -59,8 +59,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         //Generate JWT token
         String token = jwtService.generateToken(savedUser);
+        String refreshToken = jwtService.generateRefreshToken(savedUser);
 
-        return new AuthResponse(token, modelMapper.map(savedUser, UserResponse.class));
+        return new AuthResponse(token, refreshToken);
 
     }
 

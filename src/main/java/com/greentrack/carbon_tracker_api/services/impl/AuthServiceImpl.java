@@ -7,6 +7,7 @@ import com.greentrack.carbon_tracker_api.entities.User;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.security.JwtService;
 import com.greentrack.carbon_tracker_api.services.AuthService;
+import com.greentrack.carbon_tracker_api.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,8 +25,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtService jwtService;
-    private final ModelMapper modelMapper;
 
     public AuthResponse loginUser(UserLoginRequest request) {
 
@@ -34,17 +35,30 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-//        User userExact = (User) authentication.getPrincipal();
-
-        // Get user details
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not Found"));
-
+        User user = (User) authentication.getPrincipal();
 
         String token = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
 
-        return new AuthResponse(token, modelMapper.map(user, UserResponse.class));
+        return new AuthResponse(token, refreshToken);
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        String userId = jwtService.getUserIdFromRefreshToken(refreshToken);
+
+        //validate the refresh token is present in the db for session handling
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not Found"));
+
+        String token = jwtService.generateToken(user);
+
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        return new AuthResponse(token, refreshToken);
     }
 }

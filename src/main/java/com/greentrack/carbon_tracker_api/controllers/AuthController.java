@@ -6,15 +6,21 @@ import com.greentrack.carbon_tracker_api.dto.userDto.UserLoginRequest;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserRegistrationRequest;
 import com.greentrack.carbon_tracker_api.services.AuthService;
 import com.greentrack.carbon_tracker_api.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @Slf4j
 @RestController
@@ -38,13 +44,39 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody UserLoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
         try {
             AuthResponse authResponse = authService.loginUser(request);
+
+            Cookie cookie = new Cookie("refreshToken", authResponse.getRefreshToken());
+            cookie.setHttpOnly(true);
+
+            response.addCookie(cookie);
+
             return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("Invalid credentials"));
+        }
+    }
+
+    @PostMapping("/refreshToken")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(HttpServletRequest request) {
+
+        try {
+            //fetch refresh token from the cookies
+            String refreshToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                    .findFirst()
+                    .map(cookie -> cookie.getValue())
+                    .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found inside the Cookies"));
+
+            AuthResponse authResponse = authService.refreshToken(refreshToken);
+
+            return ResponseEntity.ok(ApiResponse.success("JWT token updated", authResponse));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Token is expired, Please login again"));
         }
     }
 
