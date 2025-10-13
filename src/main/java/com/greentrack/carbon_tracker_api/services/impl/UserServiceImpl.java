@@ -35,7 +35,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final String OTP_PREFIX = "otp:";
     private final JwtService jwtService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final OtpService otpService;
@@ -104,6 +103,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setActive(true);
 
         User savedUser = userRepository.save(user);
+
+        //Delete registration cache
+        redisTemplate.delete(regKey);
 
         //Generate JWT token
         String token = jwtService.generateToken(savedUser);
