@@ -37,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
-            log.info("OTP email sent successfully to: {}", toEmail);
+            log.info("OTP sending to: {}", toEmail);
 
         } catch (MessagingException e) {
             log.error("Failed to send OTP email to: {}", toEmail, e);

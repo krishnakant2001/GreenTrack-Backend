@@ -99,7 +99,6 @@ public class OtpServiceImpl implements OtpService {
             OtpData otpData = new ObjectMapper().registerModule(new JavaTimeModule())
                     .convertValue(obj, OtpData.class);
 
-            log.info("OTP Data {}", otpData);
 
             if (otpData == null) {
                 response.put("success", false);
