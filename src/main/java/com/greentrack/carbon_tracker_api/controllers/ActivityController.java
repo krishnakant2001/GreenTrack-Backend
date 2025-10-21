@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/activities")
+@RequestMapping("/api/user/activities")
 public class ActivityController {
 
     private final ActivityService activityService;

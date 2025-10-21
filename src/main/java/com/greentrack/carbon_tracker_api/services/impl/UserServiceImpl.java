@@ -24,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -101,6 +103,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         user.setActive(true);
+
+        user.setRoles(new HashSet<>(Collections.singleton("ROLE_USER")));
 
         User savedUser = userRepository.save(user);
 

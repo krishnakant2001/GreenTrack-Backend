@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -39,6 +42,8 @@ public class User implements UserDetails {
     private String region; // For emission factor calculation (e.g., "IN", "US", "EU")
     private boolean isActive = true;
 
+    private Set<String> roles = new HashSet<>(Collections.singleton("ROLE_USER"));
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
@@ -50,7 +55,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new HashSet<SimpleGrantedAuthority>();
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
     }
 
     @Override

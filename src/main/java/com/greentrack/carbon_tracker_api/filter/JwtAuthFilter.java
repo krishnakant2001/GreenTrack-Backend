@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -52,8 +55,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserResponse userResponse = userService.getUserById(userId);
 
+                // Extract roles from JWT token
+                List<String> roles = jwtService.getRolesFromToken(token);
+
+                // Convert roles to GrantedAuthority
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userResponse, null, null);
+                        new UsernamePasswordAuthenticationToken(userResponse, null, authorities);
                 // device details like ip address
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
