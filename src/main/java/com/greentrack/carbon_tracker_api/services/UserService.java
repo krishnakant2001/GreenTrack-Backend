@@ -5,6 +5,7 @@ import com.greentrack.carbon_tracker_api.dto.userDto.AuthResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserRegistrationRequest;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserUpdateRequest;
+import com.greentrack.carbon_tracker_api.entities.User;
 
 import java.util.Map;
 
@@ -21,6 +22,10 @@ public interface UserService {
     UserResponse getUserProfile(String email);
 
     UserResponse updateUserProfile(String email, UserUpdateRequest request);
+
+    User getUserByEmail(String email);
+
+    User savedNewUser(User user);
 
     void deleteUser(String email);
 

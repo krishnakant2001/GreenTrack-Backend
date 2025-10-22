@@ -196,6 +196,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return modelMapper.map(updatedUser, UserResponse.class);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public User savedNewUser(User newUser) {
+        return userRepository.save(newUser);
+    }
+
     public void deleteUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
