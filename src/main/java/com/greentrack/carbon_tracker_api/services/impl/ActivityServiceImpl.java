@@ -10,6 +10,7 @@ import com.greentrack.carbon_tracker_api.repositories.ActivityRepository;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.services.ActivityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
 
@@ -42,6 +44,7 @@ public class ActivityServiceImpl implements ActivityService {
                     .findByUserIdAndClientIdempotencyKey(user.getId(), request.getClientIdempotencyKey());
 
             if(existing.isPresent()) {
+                log.info("Client idempotency key is present....");
                 return modelMapper.map(existing.get(), ActivityResponse.class);
             }
         }
@@ -55,6 +58,8 @@ public class ActivityServiceImpl implements ActivityService {
         EmissionFactor factor = emissionCalculationService
                 .findEmissionFactor(user.getRegion(), request.getCategory(), request.getSubType(), request.getUnit())
                 .orElseThrow(() -> new RuntimeException("Emission factor not found"));
+
+        log.info("Activity creating for user {}", userEmail);
 
         //Create Activity
         Activity activity = Activity.builder()
@@ -75,6 +80,9 @@ public class ActivityServiceImpl implements ActivityService {
                 .build();
 
         Activity savedActivity = activityRepository.save(activity);
+
+        log.info("Activity created successfully....");
+
         return modelMapper.map(savedActivity, ActivityResponse.class);
 
     }
@@ -83,6 +91,8 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ActivityResponse> getUserActivities(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        log.info("Getting all activities of user {}", userEmail);
 
         List<Activity> activities = activityRepository.findByUserIdOrderByActivityDateDesc(user.getId());
 
@@ -122,6 +132,8 @@ public class ActivityServiceImpl implements ActivityService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        log.info("Activity updating process started....");
+
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() ->  new RuntimeException("Activity not found"));
 
@@ -153,6 +165,8 @@ public class ActivityServiceImpl implements ActivityService {
 
         activity.setUpdatedAt(LocalDateTime.now());
         Activity updatedActivity = activityRepository.save(activity);
+
+        log.info("Activity updated successfully....");
 
         return modelMapper.map(updatedActivity, ActivityResponse.class);
     }

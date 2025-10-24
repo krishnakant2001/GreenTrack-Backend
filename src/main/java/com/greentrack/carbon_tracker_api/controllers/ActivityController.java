@@ -8,6 +8,7 @@ import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.services.ActivityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,15 +21,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/user/activities")
 public class ActivityController {
 
     private final ActivityService activityService;
 
-    @PostMapping
+    @PostMapping("/createActivity")
     public ResponseEntity<ApiResponse<ActivityResponse>> createActivity(@Valid @RequestBody ActivityCreateRequest request) {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            log.info("Activity creation process started....");
 
             ActivityResponse activity = activityService.createActivity(user.getEmail(), request);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -66,6 +70,8 @@ public class ActivityController {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+            log.info("Getting user activity by activity id: {}", activityId);
+
             ActivityResponse activity = activityService.getActivityById(user.getEmail(), activityId);
             return ResponseEntity.ok(ApiResponse.success(activity));
 
@@ -80,6 +86,8 @@ public class ActivityController {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+            log.info("Updating user activity by activity id: {}", activityId);
+
             ActivityResponse activity = activityService.updateActivity(user.getEmail(), activityId, request);
             return ResponseEntity.ok(ApiResponse.success("Activity updated successfully", activity));
 
@@ -93,6 +101,8 @@ public class ActivityController {
     public ResponseEntity<ApiResponse<String>> deleteActivity(@PathVariable String activityId) {
         try {
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            log.info("Deleting user activity by activity id: {}", activityId);
 
             activityService.deleteActivity(user.getEmail(), activityId);
             return ResponseEntity.ok(ApiResponse.success("Activity deleted successfully"));
