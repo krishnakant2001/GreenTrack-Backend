@@ -2,15 +2,12 @@ package com.greentrack.carbon_tracker_api.services.impl;
 
 import com.greentrack.carbon_tracker_api.dto.userDto.AuthResponse;
 import com.greentrack.carbon_tracker_api.dto.userDto.UserLoginRequest;
-import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.entities.User;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.security.JwtService;
 import com.greentrack.carbon_tracker_api.services.AuthService;
-import com.greentrack.carbon_tracker_api.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,10 +22,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final JwtService jwtService;
 
     public AuthResponse loginUser(UserLoginRequest request) {
+
+        log.info("Login process started....");
 
         // Authenticate user
         Authentication authentication = authenticationManager.authenticate(
@@ -42,6 +40,8 @@ public class AuthServiceImpl implements AuthService {
 
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);
+
+        log.info("User successfully logged in....");
 
         return new AuthResponse(token, refreshToken);
     }

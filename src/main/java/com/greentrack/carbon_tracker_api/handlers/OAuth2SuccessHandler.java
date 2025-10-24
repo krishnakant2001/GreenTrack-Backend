@@ -37,7 +37,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String email = oAuth2User.getAttribute("email");
         log.info(oAuth2User.getAttribute("email"));
-        log.info(oAuth2User.getAttribute("locale"));
 
         User user = userService.getUserByEmail(email);
 

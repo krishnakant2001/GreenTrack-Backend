@@ -157,13 +157,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public UserResponse getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
         return modelMapper.map(user, UserResponse.class);
     }
 
     public UserResponse updateUserProfile(String email, UserUpdateRequest request) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+
+        log.info("User profile updating started....");
+        log.info("Updating user email: {}", email);
 
         //Update fields if provided
         if(!request.getFirstName().isEmpty()){
@@ -193,6 +196,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setUpdatedAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
 
+        log.info("User profile updated successfully....");
+
         return modelMapper.map(updatedUser, UserResponse.class);
     }
 
@@ -206,7 +211,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public void deleteUser(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
         userRepository.delete(user);
     }
 }

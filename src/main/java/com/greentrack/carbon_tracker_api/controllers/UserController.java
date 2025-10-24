@@ -22,6 +22,7 @@ public class UserController {
     @GetMapping("/getProfileDetails")
     public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {
         try {
+            log.info("Getting user profile details");
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserResponse userResponse = userService.getUserProfile(user.getEmail());
             return ResponseEntity.ok(ApiResponse.success(userResponse));
@@ -35,6 +36,7 @@ public class UserController {
     @PutMapping("/updateProfileDetails")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserProfile(@Valid @RequestBody UserUpdateRequest request) {
         try {
+            log.info("Updating user profile details");
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserResponse userResponse = userService.updateUserProfile(user.getEmail(), request);
             return ResponseEntity.ok(ApiResponse.success("Profile Updated Successfully", userResponse));
@@ -52,6 +54,7 @@ public class UserController {
     @DeleteMapping("/deleteProfile")
     public ResponseEntity<ApiResponse<String>> deleteAccount() {
         try {
+            log.info("Deleting user profile account");
             UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             userService.deleteUser(user.getEmail());
             return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
