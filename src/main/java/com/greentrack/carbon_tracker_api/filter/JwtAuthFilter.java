@@ -1,6 +1,7 @@
 package com.greentrack.carbon_tracker_api.filter;
 
 import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
+import com.greentrack.carbon_tracker_api.repositories.SessionRepository;
 import com.greentrack.carbon_tracker_api.security.JwtService;
 import com.greentrack.carbon_tracker_api.services.impl.UserServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -30,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserServiceImpl userService;
+    private final SessionRepository sessionRepository;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -53,6 +55,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String userId = jwtService.getUserIdFromToken(token);
 
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
+
+                // Check sessionId from jwt token
+                String sessionId = jwtService.getSessionIdFromToken(token);
+                boolean sessionExists = sessionRepository.existsByUserIdAndSessionId(userId, sessionId);
+
+                if (!sessionExists) {
+                    throw new SecurityException("Session invalid or expired. Please log in again.");
+                }
+
                 UserResponse userResponse = userService.getUserById(userId);
 
                 // Extract roles from JWT token

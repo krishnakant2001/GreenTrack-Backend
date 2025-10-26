@@ -10,6 +10,7 @@ import com.greentrack.carbon_tracker_api.dto.userDto.UserUpdateRequest;
 import com.greentrack.carbon_tracker_api.entities.User;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.security.JwtService;
+import com.greentrack.carbon_tracker_api.security.SessionService;
 import com.greentrack.carbon_tracker_api.services.OtpService;
 import com.greentrack.carbon_tracker_api.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final JwtService jwtService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final OtpService otpService;
+    private final SessionService sessionService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -111,9 +114,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         //Delete registration cache
         redisTemplate.delete(regKey);
 
+        //Create sessionId
+        String sessionId = UUID.randomUUID().toString();
+
         //Generate JWT token
-        String token = jwtService.generateToken(savedUser);
+        String token = jwtService.generateToken(savedUser, sessionId);
         String refreshToken = jwtService.generateRefreshToken(savedUser);
+
+        sessionService.generateNewSession(user.getId(), refreshToken, sessionId);
 
         log.info("Registration successfully done....");
 
@@ -140,9 +148,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         User savedUser = userRepository.save(user);
 
+        //Create sessionId
+        String sessionId = UUID.randomUUID().toString();
+
         //Generate JWT token
-        String token = jwtService.generateToken(savedUser);
+        String token = jwtService.generateToken(savedUser, sessionId);
         String refreshToken = jwtService.generateRefreshToken(savedUser);
+
+        sessionService.generateNewSession(user.getId(), refreshToken, sessionId);
 
         return new AuthResponse(token, refreshToken);
 

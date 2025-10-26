@@ -2,6 +2,7 @@ package com.greentrack.carbon_tracker_api.handlers;
 
 import com.greentrack.carbon_tracker_api.entities.User;
 import com.greentrack.carbon_tracker_api.security.JwtService;
+import com.greentrack.carbon_tracker_api.security.SessionService;
 import com.greentrack.carbon_tracker_api.services.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -27,6 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final SessionService sessionService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -55,8 +58,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             user = userService.savedNewUser(newUser);
         }
 
-        String accessToken = jwtService.generateToken(user);
+        String sessionId = UUID.randomUUID().toString();
+
+        String accessToken = jwtService.generateToken(user, sessionId);
         String refreshToken = jwtService.generateRefreshToken(user);
+
+        sessionService.generateNewSession(user.getId(), refreshToken, sessionId);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);

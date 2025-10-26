@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -25,11 +26,12 @@ public class JwtService {
     }
 
     //create a JWT token
-    public String generateToken(User user){
+    public String generateToken(User user, String sessionId){
         return Jwts.builder()
                 .subject(String.valueOf(user.getId()))
                 .claim("email", user.getEmail())
                 .claim("type", "access")
+                .claim("sessionId", sessionId)
                 .claim("roles", new ArrayList<>(user.getRoles()))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 15))
@@ -87,5 +89,15 @@ public class JwtService {
                 .getPayload();
 
         return claims.getSubject();
+    }
+
+    public String getSessionIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("sessionId", String.class);
     }
 }
