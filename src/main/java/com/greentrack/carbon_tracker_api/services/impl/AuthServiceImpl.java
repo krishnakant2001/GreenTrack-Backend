@@ -73,4 +73,9 @@ public class AuthServiceImpl implements AuthService {
 
         return new AuthResponse(token, refreshToken);
     }
+
+    public void logoutUser(String refreshToken) {
+        String userId = jwtService.getUserIdFromRefreshToken(refreshToken);
+        sessionService.deleteSession(userId);
+    }
 }

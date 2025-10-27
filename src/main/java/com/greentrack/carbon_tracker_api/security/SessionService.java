@@ -47,4 +47,17 @@ public class SessionService {
         session.setLastUsedAt(LocalDateTime.now());
         sessionRepository.save(session);
     }
+
+    public void deleteSession(String userId) {
+        List<Session> sessionList = sessionRepository.findByUserId(userId);
+
+        if(!sessionList.isEmpty()) {
+            sessionRepository.deleteByUserId(userId);
+            log.info("All sessions deleted for user {}", userId);
+
+            //sessionRepository.deleteAll(sessionList);
+        } else {
+            log.info("No active sessions found for user {}", userId);
+        }
+    }
 }

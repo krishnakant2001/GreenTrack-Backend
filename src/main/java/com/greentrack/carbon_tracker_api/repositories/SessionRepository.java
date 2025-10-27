@@ -14,4 +14,6 @@ public interface SessionRepository extends MongoRepository<Session, String> {
     Optional<Session> findByRefreshToken(String refreshToken);
 
     boolean existsByUserIdAndSessionId(String userId, String sessionId);
+
+    void deleteByUserId(String userId);
 }

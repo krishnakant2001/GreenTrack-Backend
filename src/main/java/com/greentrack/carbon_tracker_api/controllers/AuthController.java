@@ -106,5 +106,25 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+        try {
+            //fetch refresh token from the cookies
+            String refreshToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                    .findFirst()
+                    .map(cookie -> cookie.getValue())
+                    .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found inside the Cookies"));
+
+            authService.logoutUser(refreshToken);
+
+            return ResponseEntity.ok(ApiResponse.success("User successfully logout"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Internal Server Error"));
+        }
+    }
+
 
 }
