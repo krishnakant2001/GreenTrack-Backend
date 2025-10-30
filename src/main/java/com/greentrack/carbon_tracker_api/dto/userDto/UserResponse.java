@@ -12,6 +12,6 @@ public class UserResponse {
     private String lastName;
     private String region;
     private Boolean isActive;
-    private LocalDateTime CreatedAt;
+    private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
 }
