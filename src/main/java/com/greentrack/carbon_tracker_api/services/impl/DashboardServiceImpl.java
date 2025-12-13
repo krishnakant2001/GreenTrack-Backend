@@ -8,6 +8,7 @@ import com.greentrack.carbon_tracker_api.repositories.ActivityRepository;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.services.DashboardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DashboardServiceImpl implements DashboardService {
 
     private final ActivityRepository activityRepository;
@@ -47,6 +49,8 @@ public class DashboardServiceImpl implements DashboardService {
 
         List<Activity> previousActivities = activityRepository
                 .findUserActivitiesInDateRange(user.getId(), prevStartDateTime, prevEndDateTime);
+
+        log.info("Getting dashboard summary for user {}", user.getId());
 
         return buildDashboardSummary(user.getId(), currentActivities, previousActivities, period, endDate);
     }

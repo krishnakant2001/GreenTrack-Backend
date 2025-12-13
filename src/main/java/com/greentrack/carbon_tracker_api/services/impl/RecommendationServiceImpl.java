@@ -11,6 +11,7 @@ import com.greentrack.carbon_tracker_api.repositories.RecommendationRepository;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.services.RecommendationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
@@ -35,6 +37,9 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Recommendation> recommendations = recommendationRepository.findByUserIdOrderByIdDesc(user.getId());
+
+        log.info("Getting recommendations for user {}", userEmail);
+
         return recommendations.stream()
                 .map(recommendation -> modelMapper.map(recommendation, RecommendationResponse.class))
                 .collect(Collectors.toList());
@@ -56,6 +61,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         // save recommendations
         List<Recommendation> savedRecommendations = recommendationRepository.saveAll(recommendations);
+
+        log.info("Successfully generating recommendations for user {}", userEmail);
 
         return savedRecommendations.stream()
                 .map(recommendation -> modelMapper.map(recommendation, RecommendationResponse.class))

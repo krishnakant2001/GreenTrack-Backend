@@ -2,9 +2,10 @@ package com.greentrack.carbon_tracker_api.controllers;
 
 import com.greentrack.carbon_tracker_api.advice.ApiResponse;
 import com.greentrack.carbon_tracker_api.dto.recommendationDto.RecommendationResponse;
-import com.greentrack.carbon_tracker_api.entities.User;
+import com.greentrack.carbon_tracker_api.dto.userDto.UserResponse;
 import com.greentrack.carbon_tracker_api.services.RecommendationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/user/recommendations")
 @RequiredArgsConstructor
+@Slf4j
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
@@ -24,7 +26,8 @@ public class RecommendationController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<RecommendationResponse>>> getUserRecommendations() {
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Getting recommendations....");
         List<RecommendationResponse> recommendations = recommendationService.getUserRecommendations(user.getEmail());
         return ResponseEntity.ok(ApiResponse.success(recommendations));
 
@@ -32,8 +35,8 @@ public class RecommendationController {
 
     @PostMapping("/generate")
     public ResponseEntity<ApiResponse<List<RecommendationResponse>>> generateRecommendations() {
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Generating recommendations....");
+        UserResponse user = (UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<RecommendationResponse> recommendations = recommendationService.generateRecommendations(user.getEmail());
         return ResponseEntity.ok(ApiResponse.success("Recommendation generate successfully", recommendations));
 

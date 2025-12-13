@@ -3,7 +3,7 @@ package com.greentrack.carbon_tracker_api.dto.emissionFactorDto;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivityCategory;
 import com.greentrack.carbon_tracker_api.entities.enums.ActivitySubType;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -27,7 +27,7 @@ public class EmissionFactorCreateRequest {
     private String unit;
 
     @NotNull(message = "CO2e factor is required")
-    @Positive(message = "CO2e factor must be positive")
+    @PositiveOrZero(message = "CO2e factor must be positive or zero")
     private BigDecimal co2eFactor;
 
     @Size(max = 500, message = "Methodology cannot exceed 500 characters")

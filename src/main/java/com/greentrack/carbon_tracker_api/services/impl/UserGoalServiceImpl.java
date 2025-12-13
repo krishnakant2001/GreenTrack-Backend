@@ -11,6 +11,7 @@ import com.greentrack.carbon_tracker_api.repositories.UserGoalRepository;
 import com.greentrack.carbon_tracker_api.repositories.UserRepository;
 import com.greentrack.carbon_tracker_api.services.UserGoalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserGoalServiceImpl implements UserGoalService {
 
     private final UserGoalRepository userGoalRepository;
@@ -43,6 +45,8 @@ public class UserGoalServiceImpl implements UserGoalService {
             throw new RuntimeException("You already have a similar goal for this period");
         }
 
+        log.info("Goal creating for user {} {}", user.getId(), userEmail);
+
         //Calculate baseline emissions
         BigDecimal baselineValue = calculateBaselineEmission(user.getId(), request);
 
@@ -61,6 +65,8 @@ public class UserGoalServiceImpl implements UserGoalService {
                 .build();
 
         goal.setCurrentValue(calculateCurrentProgress(user.getId(), goal));
+
+        log.info("Activity created successfully....");
 
         UserGoal savedGoal = userGoalRepository.save(goal);
         return mapToUserGoalResponse(savedGoal);
@@ -97,6 +103,8 @@ public class UserGoalServiceImpl implements UserGoalService {
             throw new RuntimeException("Goal not found");
         }
 
+        log.info("Goal updating process started....");
+
         // Update fields if provided
         if (request.getGoalType() != null) {
             goal.setGoalType(request.getGoalType());
@@ -128,6 +136,9 @@ public class UserGoalServiceImpl implements UserGoalService {
         goal.setUpdatedAt(LocalDateTime.now());
 
         UserGoal updatedGoal = userGoalRepository.save(goal);
+
+        log.info("Goal updated successfully....");
+
         return mapToUserGoalResponse(updatedGoal);
 
     }
