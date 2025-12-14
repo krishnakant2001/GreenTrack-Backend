@@ -170,14 +170,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return modelMapper.map(user, UserResponse.class);
     }
 
-    @Cacheable(value = "user-profiles", key = "#user.email")
+    @Cacheable(value = "user-profiles", key = "#email")
     public UserResponse getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
         return modelMapper.map(user, UserResponse.class);
     }
 
-    @CacheEvict(value = "userProfiles", key = "#user.email")
+    @CacheEvict(value = "user-profiles", key = "#email")
     public UserResponse updateUserProfile(String email, UserUpdateRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
