@@ -1,20 +1,11 @@
 services:
-#  mongo:
-#    image: mongo:7
-#    container_name: mongo
-#    ports:
-#      - "27017:27017"
-#    environment:
-#      MONGO_DB: greentrack-db
-#      USER: krishnakant
-#      PASSWORD: password
-#    volumes:
-#      - mongo_data:/data/db
   redis:
-    image: redis:latest
+    image: redis:7
     container_name: redis
-    ports:
-      - "6379:6379"
+    restart: always
+    # DO NOT expose Redis in production
+    # ports:
+    #   - "6379:6379"
 
   greentrack:
     build:
@@ -28,12 +19,11 @@ services:
       - redis
     environment:
       SPRING_DATA_MONGODB_URI: ${MONGODB_URI}
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      EMAIL_USERNAME: ${EMAIL_USERNAME}
-      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-
     restart: always
