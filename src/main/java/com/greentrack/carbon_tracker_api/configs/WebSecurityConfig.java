@@ -45,6 +45,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/oauth2/**").permitAll() // for spring oauth2 internal routes
                         .requestMatchers("/login/**").permitAll() // for oauth2 redirect handlers
 
+                        .requestMatchers("/actuator/health").permitAll() // Actuator health endpoint - publicly accessible
+
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
 
