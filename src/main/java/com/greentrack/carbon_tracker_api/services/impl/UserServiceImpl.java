@@ -27,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -64,14 +61,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String normalizedEmail = request.getEmail().toLowerCase().trim();
 
         // Send OTP
-        Map<String, Object> otpResponse = otpService.sendOtp(normalizedEmail);
+        otpService.sendOtp(normalizedEmail);
 
         // Store pending registration data (for 15 minutes)
         String regKey = "REGISTRATION:" + normalizedEmail;
         redisTemplate.opsForValue().set(regKey, request, 10, TimeUnit.MINUTES);
 
+        Map<String, Object> otpResponse = new HashMap<>();
         otpResponse.put("email", normalizedEmail);
-        otpResponse.put("message", "OTP sent successfully. Proceed to verification.");
+        otpResponse.put("message", "If the email exists, an OTP has been sent");
 
         return otpResponse;
     }

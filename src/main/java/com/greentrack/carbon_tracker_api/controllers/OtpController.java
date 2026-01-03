@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,17 +43,15 @@ public class OtpController {
 
             log.info("Received request to send OTP to email: {}", sendOtpRequest.getEmail());
 
-            Map<String, Object> result = otpService.sendOtp(sendOtpRequest.getEmail());
+            otpService.sendOtp(sendOtpRequest.getEmail());
 
-            boolean isSuccess = (boolean) result.get("success");
-            String message = (String) result.get("message");
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", sendOtpRequest.getEmail());
+            response.put("message", "If the email exists, an OTP has been sent");
 
-            if (isSuccess) {
-                return ResponseEntity.ok(ApiResponse.success("OTP send", result));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(ApiResponse.error(message));
-            }
+            return ResponseEntity.ok(
+                    ApiResponse.success("OTP initiated", response)
+            );
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Failed to send the OTP"));
@@ -113,17 +112,15 @@ public class OtpController {
 
             log.info("Received request to resend OTP to email: {}", sendOtpRequest.getEmail());
 
-            Map<String, Object> result = otpService.resendOtp(sendOtpRequest.getEmail());
+            otpService.resendOtp(sendOtpRequest.getEmail());
 
-            boolean isSuccess = (boolean) result.get("success");
-            String message = (String) result.get("message");
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", sendOtpRequest.getEmail());
+            response.put("message", "If the email exists, an OTP has been sent");
 
-            if (isSuccess) {
-                return ResponseEntity.ok(ApiResponse.success("OTP resend", result));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(ApiResponse.error(message));
-            }
+            return ResponseEntity.ok(
+                    ApiResponse.success("OTP initiated", response)
+            );
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError()

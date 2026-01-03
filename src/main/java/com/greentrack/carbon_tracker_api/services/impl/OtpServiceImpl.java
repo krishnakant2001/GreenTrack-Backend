@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -39,10 +40,8 @@ public class OtpServiceImpl implements OtpService {
     private int otpLength;
 
     //Generate and Send OTP to email
-
-    public Map<String, Object> sendOtp(String email) {
-        Map<String, Object> response = new HashMap<>();
-
+    @Async
+    public void sendOtp(String email) {
         try{
             String normalizedEmail = email.toLowerCase().trim();
 
@@ -70,19 +69,12 @@ public class OtpServiceImpl implements OtpService {
             // Send otp via email
             emailService.sendOtpEmail(email, otp);
 
-            response.put("success", true);
-            response.put("message", "OTP sent successfully to your email");
-
             log.info("OTP sent successfully to email: {}", normalizedEmail);
 
 
         } catch (Exception e) {
             log.error("Error sending OTP to email: {}", email, e);
-            response.put("success", false);
-            response.put("message", "Failed to send OTP. Please try again.");
         }
-
-        return response;
     }
 
 
@@ -162,8 +154,8 @@ public class OtpServiceImpl implements OtpService {
     }
 
     // Resend OTP
-    public Map<String, Object> resendOtp(String email) {
-        return sendOtp(email);
+    public void resendOtp(String email) {
+        sendOtp(email);
     }
 
     // Check if email is verified
