@@ -1,13 +1,16 @@
 package com.greentrack.carbon_tracker_api.services.impl;
 
 import com.greentrack.carbon_tracker_api.services.EmailService;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,38 +18,73 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailServiceImpl implements EmailService {
 
-    private final JavaMailSender mailSender;
+//    private final JavaMailSender mailSender;
+    private final SendGrid sendGrid;
 
-    @Value("${spring.mail.username}")
-    private String fromEmail;
+//    @Value("${spring.mail.username}")
+//    private String fromEmail;
+
+    @Value("${sendgrid.sender.email}")
+    private String senderEmail;
 
     @Value("${otp.expiry.minutes}")
     private int otpExpiryMinutes;
 
-
+    @Override
     public void sendOtpEmail(String toEmail, String otp) {
+
+        Email from = new Email(senderEmail, "GreenTrack");
+        Email to = new Email(toEmail);
+
+        String subject = "Your OTP for GreenTrack Verification";
+        Content content = new Content("text/html", buildOtpEmailTemplate(otp));
+        Mail mail = new Mail(from, subject, to, content);
+
+        Request request = new Request();
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
 
-            helper.setFrom(fromEmail, "GreenTrack");
-            helper.setTo(toEmail);
-            helper.setSubject("Your OTP for Verification");
+            Response response = sendGrid.api(request);
 
-            String htmlContent = buildOtpEmailTemplate(otp);
-            helper.setText(htmlContent, true);
+            if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+                log.info("SendGrid OTP email sent to {}", toEmail);
+            } else {
+                log.error("SendGrid error {}: {}", response.getStatusCode(), response.getBody());
+                throw new RuntimeException("SendGrid email failed");
+            }
 
-            mailSender.send(message);
-            log.info("OTP sending to: {}", toEmail);
-
-        } catch (MessagingException e) {
-            log.error("Failed to send OTP email to: {}", toEmail, e);
-            throw new RuntimeException("Failed to send OTP email", e);
         } catch (Exception e) {
-            log.error("Unexpected error while sending email", e);
-            throw new RuntimeException("Failed to send OTP email", e);
+            log.error("SendGrid exception", e);
+            throw new RuntimeException("Failed to send OTP email");
         }
     }
+
+
+//    public void sendOtpEmail(String toEmail, String otp) {
+//        try {
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//
+//            helper.setFrom(fromEmail, "GreenTrack");
+//            helper.setTo(toEmail);
+//            helper.setSubject("Your OTP for Verification");
+//
+//            String htmlContent = buildOtpEmailTemplate(otp);
+//            helper.setText(htmlContent, true);
+//
+//            mailSender.send(message);
+//            log.info("OTP sending to: {}", toEmail);
+//
+//        } catch (MessagingException e) {
+//            log.error("Failed to send OTP email to: {}", toEmail, e);
+//            throw new RuntimeException("Failed to send OTP email", e);
+//        } catch (Exception e) {
+//            log.error("Unexpected error while sending email", e);
+//            throw new RuntimeException("Failed to send OTP email", e);
+//        }
+//    }
 
     private String buildOtpEmailTemplate(String otp) {
         return """
