@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -30,6 +31,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final UserService userService;
     private final JwtService jwtService;
     private final SessionService sessionService;
+
+    @Value("${frontend.redirect.url}")
+    private String googleFrontEndUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -66,11 +70,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         sessionService.generateNewSession(user.getId(), refreshToken, sessionId);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true);
+//        cookie.setAttribute("SameSite", "Lax");
 
         response.addCookie(cookie);
 
-        String frontEndUrl = "http://localhost:3000/dashboard?token=" + accessToken;
+        String frontEndUrl = googleFrontEndUrl + "/oauth2/redirect?token=" + accessToken;
 
         getRedirectStrategy().sendRedirect(request, response, frontEndUrl);
 
